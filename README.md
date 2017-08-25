@@ -20,7 +20,14 @@ Options:
                       default: 500).
 ```
 
+## Example
+
+A typical example use-case is when sided with razer-daemon. One may choose to
+script driver settings in order to change LED effect when the user is AFK,
+before setting them back when user is back here.
+
 ## Notes
 
-Make sure the author is aware of xidle. Well, he wasn't, while quickly writing
-this.
+Be sure the author is aware of xidle. Of course, he wasn't while quickly writing
+this. Additionnally, at first glance, xidle doesn't seem to feature out-of-idle
+program execution.
