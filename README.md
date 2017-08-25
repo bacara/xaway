@@ -23,8 +23,8 @@ Options:
 ## Example
 
 A typical example use-case is when sided with razer-daemon. One may choose to
-script driver settings in order to change LED effect when the user is AFK,
-before setting them back when user is back here.
+script driver settings in order to change LED effect when the user is away from
+keyboard, before setting them back when user is back here.
 
 ## Notes
 
