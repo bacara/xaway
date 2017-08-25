@@ -1,4 +1,5 @@
 # xaway
+
 An X11 away-from-keyboard command launcher daemon
 
 ## Usage
@@ -18,3 +19,8 @@ Options:
   -i, --interval=N    Set inactivity checks interval to N (in milliseconds,
                       default: 500).
 ```
+
+## Notes
+
+Make sure the author is aware of xidle. Well, he wasn't, while quickly writing
+this.
