@@ -4,22 +4,33 @@ xaway \- an X11 away-from-keyboard command launcher daemon
 .SH SYNOPSIS
 .B xaway
 [\fBOPTIONS\fR]
-\fBidle_script\fR
-[\fBactive_script\fR]
+\fBIDLE_CMD\fR
+[\fBACTIVE_CMD\fR]
 .SH DESCRIPTION
 .B xaway
 handles launching command after a specific period of X11 inactivity or when
 becoming active again.
+
+Each time a period timer clocks out, the daemon checks for X11 activity
+(keyboard, mouse, videos or games) and compare it to a user-specified timeout
+(default, 60 seconds).
+
+Parameter \fBIDLE_CMD\fR is mandatory. This is the command to execute when inactivity
+is detected.
+
+Parameter \fBACTIVE_CMD\fR is the command to execute when activity is detected after
+an idle period.
+
 .SH OPTIONS
 .TP
 .BR \-h ", " \-\-help\fR
 Print help and exit.
 .TP
 .BR \-t ", " \-\-timeout =\fIN\fR
-Set inactivity timeout to N (in seconds).
+Set inactivity timeout to N (in seconds, default: 60).
 .TP
-.BR \-i ", " \-\-interval =\fIN\fR
-Set inactivity checks interval to N (in milliseconds).
+.BR \-p ", " \-\-period =\fIN\fR
+Set inactivity checks period to N (in milliseconds, default: 500).
 .SH AUTHOR
 Written by Christophe Bacara
 .SH COPYRIGHT

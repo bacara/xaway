@@ -32,53 +32,58 @@
 
 #include <X11/extensions/scrnsaver.h>
 
-#define PROGRAM_NAME		"xaway"
+#define PROGRAM_NAME	"xaway"
 
 #define MONTH_IN_SECONDS	2592000
 
 /*
  * Allowed options
  */
-#define OPTION_STRING "ht:i:"
+#define OPTION_STRING	"ht:i:"
 
 /*
  * Long option strings
  */
 static struct option long_options[] =
 {
-	{ "help",         no_argument,       NULL, 'h' },
-	{ "timeout",      required_argument, NULL, 't' },
-	{ "interval",     required_argument, NULL, 'i' },
+	{ "help",    no_argument,       NULL, 'h' },
+	{ "timeout", required_argument, NULL, 't' },
+	{ "period",  required_argument, NULL, 'p' },
 };
 
 void usage(int status)
 {
-  fprintf(stderr, "\
-Usage: %s [OPTIONS] idle_script [active_script]\n\
-Set up a daemon watching for X11 inactivity, executing commands when user is\n\
-inactive/back.\n\
+	fprintf(stderr, "\
+Usage: %s [OPTIONS] IDLE_CMD [ACTIVE_CMD]\n\
+Set up a daemon watching for X11 inactivity, executing command when user becomes\n\
+idle or comes back.\n\
 \n\
-Parameter 'idle_script' is mandatory. This is the script to execute when idle\n\
-timer occurs.\n\
+Each time a period timer clocks	out, the daemon checks for X11 activity\n\
+(keyboard, mouse, videos or games) and compare it to a user-specified\n\
+timeout (default, 60 seconds).\n\
 \n\
-Parameter 'active_script' is the script to execute when going out of idle.\n\
+Parameter IDLE_CMD is mandatory. This is the command to execute when inactivity\n\
+is detected.\n\
+\n\
+Parameter ACTIVE_CMD is the command to execute when activity is detected after.\n\
+an idle period.\n\
 \n\
 Options: \n\
   -h, --help          Print this help and exit.\n\
   -t, --timeout=N     Set idle timer to N (in seconds, default: 60).\n\
-  -i, --interval=N    Set inactivity checks interval to N (in milliseconds,\n\
+  -p, --period=N      Set inactivity checks period to N (in milliseconds,\n\
                       default: 500).\n\
 ", PROGRAM_NAME);
 
-  exit(status);
+	exit(status);
 }
 
-static void loop(unsigned int timeout, unsigned int interval, char *idle_script, char *active_script)
+static void loop(unsigned int timeout, unsigned int period, char *idle_cmd, char *active_cmd)
 {
-	Display				*display	   = NULL;
-	XScreenSaverInfo	*scrnsaverinfo = NULL;
+	Display          *display       = NULL;
+	XScreenSaverInfo *scrnsaverinfo = NULL;
 
-	bool				 idle		   = false;
+	bool              idle          = false;
 
 	/* Get display information */
 	display = XOpenDisplay(NULL);
@@ -105,8 +110,8 @@ static void loop(unsigned int timeout, unsigned int interval, char *idle_script,
 				syslog(LOG_NOTICE, "idle mode set");
 				idle = true;
 
-				if ( system(idle_script) != 0 )
-					syslog(LOG_ERR, "error while executing script");
+				if ( system(idle_cmd) != 0 )
+					syslog(LOG_ERR, "error while executing idle command");
 			}
 		}
 		else if ( idle )
@@ -114,18 +119,18 @@ static void loop(unsigned int timeout, unsigned int interval, char *idle_script,
 			syslog(LOG_NOTICE, "active mode set");
 			idle = false;
 
-			if ( system(active_script) != 0 )
-				syslog(LOG_ERR, "error while executing script");
+			if ( system(active_cmd) != 0 )
+				syslog(LOG_ERR, "error while executing active command");
 		}
 
-		usleep(interval);
+		usleep(period);
 	}
 }
 
 static void daemonize()
 {
-	pid_t	pid = 0;
-	int		x   = 0;
+	pid_t pid = 0;
+	int   x   = 0;
 
 	pid = fork();
 	if (pid < 0)
@@ -154,18 +159,14 @@ static void daemonize()
 
 int main(int argc, char *argv[])
 {
-	unsigned int	 timeout		  = 60000;	/* One minute in milliseconds */
-	unsigned int	 interval		  = 500000;	/* Half a second in microseconds */
-
-	long int		 tmp			  = 0;
-
-	int				 option_index	  = 0;
-
-	char			 c				  = 0;
-
-	char			*idle_script	  = NULL;
-	char			*active_script	  = NULL;
-	char			*endptr			  = NULL;
+	unsigned int  timeout      = 60000; /* One minute in milliseconds */
+	unsigned int  period       = 500000; /* Half a second in microseconds */
+	long int      tmp          = 0;
+	int           option_index = 0;
+	char          c            = 0;
+	char         *idle_cmd     = NULL;
+	char         *active_cmd   = NULL;
+	char         *endptr       = NULL;
 
 	/*
 	 * Options processing
@@ -194,15 +195,15 @@ int main(int argc, char *argv[])
 				timeout = (unsigned int) tmp * 1000; /* seconds to milliseconds */
 				break;
 
-			/* interval: -i, --interval */
-			case 'i':
+			/* period: -p, --period */
+			case 'p':
 				tmp = strtol(optarg, &endptr, 10);
 				if ( *endptr != '\0' || tmp < 0 || tmp > MONTH_IN_SECONDS )
 				{
-					fprintf(stderr, "%s: invalid value for interval: %s\n", PROGRAM_NAME, optarg);
+					fprintf(stderr, "%s: invalid value for period: %s\n", PROGRAM_NAME, optarg);
 					exit(EXIT_FAILURE);
 				}
-				interval = (unsigned int) tmp * 1000; /* milliseconds to microseconds */
+				period = (unsigned int) tmp * 1000; /* milliseconds to microseconds */
 				break;
 
 			/* unknown option */
@@ -221,31 +222,19 @@ int main(int argc, char *argv[])
 	if ( optind == argc )
 		usage(EXIT_FAILURE);
 
-	/* Check path to idle script */
-	idle_script = argv[optind++];
-	if ( access(idle_script, F_OK) == -1 )
-	{
-		fprintf(stderr, "%s: no such file\n", idle_script);
-		exit(EXIT_FAILURE);
-	}
+	idle_cmd = argv[optind++];
 
-	/* Check path to active script if needed */
 	if ( optind < argc )
-	{
-		active_script = argv[optind];
-		if ( access(active_script, F_OK) == -1 )
-		{
-			fprintf(stderr, "%s: no such file\n", active_script);
-			exit(EXIT_FAILURE);
-		}
-	}
+		active_cmd = argv[optind];
 
 	/* Daemonize */
 	daemonize();
+	syslog(LOG_NOTICE, "daemon started");
 
 	/* Loop */
-	syslog(LOG_NOTICE, "daemon started");
-	loop(timeout, interval, idle_script, active_script);
+	loop(timeout, period, idle_cmd, active_cmd);
+
+	/* Exit */
 	syslog(LOG_NOTICE, "daemon stopped");
 
 	return 0;
