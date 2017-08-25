@@ -1,0 +1,32 @@
+.TH XAWAY 8
+.SH NAME
+xaway \- an X11 away-from-keyboard command launcher daemon
+.SH SYNOPSIS
+.B xaway
+[\fBOPTIONS\fR]
+\fBidle_script\fR
+[\fBactive_script\fR]
+.SH DESCRIPTION
+.B xaway
+handles launching command after a specific period of X11 inactivity or when
+becoming active again.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help\fR
+Print help and exit.
+.TP
+.BR \-t ", " \-\-timeout =\fIN\fR
+Set inactivity timeout to N (in seconds).
+.TP
+.BR \-i ", " \-\-interval =\fIN\fR
+Set inactivity checks interval to N (in milliseconds).
+.SH AUTHOR
+Written by Christophe Bacara
+.SH COPYRIGHT
+Copyright \(co 2017 Christophe Bacara.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.SH SEE ALSO
+Project page: https://www.github.com/bacara/xaway
