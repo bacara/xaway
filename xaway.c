@@ -39,7 +39,7 @@
 /*
  * Allowed options
  */
-#define OPTION_STRING	"ht:i:"
+#define OPTION_STRING	"ht:p:"
 
 /*
  * Long option strings
@@ -220,12 +220,21 @@ int main(int argc, char *argv[])
 
 	/* No argument left: usage ! */
 	if ( optind == argc )
+	{
+		fprintf(stderr, "%s: not enough arguments\n", PROGRAM_NAME);
 		usage(EXIT_FAILURE);
+	}
 
 	idle_cmd = argv[optind++];
 
 	if ( optind < argc )
-		active_cmd = argv[optind];
+		active_cmd = argv[optind++];
+
+	if ( optind < argc )
+	{
+		fprintf(stderr, "%s: too many arguments\n", PROGRAM_NAME);
+		usage(EXIT_FAILURE);
+	}
 
 	/* Daemonize */
 	daemonize();
