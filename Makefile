@@ -33,8 +33,7 @@ DESTDIR?=/
 CC	:= gcc
 CFLAGS	:= -Wall -Werror
 
-LFLAGS	:= -lXss
-LFLAGS	+= -lX11
+LFLAGS	:= $(shell pkg-config --cflags --libs x11 xscrnsaver)
 
 # Generic rule
 all: $(PROGRAM_NAME)
