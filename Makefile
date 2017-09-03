@@ -53,6 +53,6 @@ cleanall: clean
 	rm -f *~ $(PROGRAM_NAME)
 
 install:
-	install -D -m755 xaway   $(DESTDIR)/usr/bin/
+	install -DT -m755 xaway   $(DESTDIR)/usr/bin/xaway
 	install	-D -m644 xaway.8 $(DESTDIR)/usr/share/man/man8/
-	install -D -m644 LICENCE $(DESTDIR)/usr/share/licenses/xaway
+	install -DT -m644 LICENCE $(DESTDIR)/usr/share/licenses/xaway
