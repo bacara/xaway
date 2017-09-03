@@ -59,4 +59,4 @@ install:
 
 	install -m755 xaway   $(DESTDIR)/usr/bin/
 	install	-m644 xaway.8 $(DESTDIR)/usr/share/man/man8/
-	install -m644 LICENCE $(DESTDIR)/usr/share/licenses/xaway
+	install -m644 LICENSE $(DESTDIR)/usr/share/licenses/xaway
