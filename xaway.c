@@ -1,5 +1,5 @@
 /*
- * Copyright (c) [2017] by Christophe Bacara <christophe.bacara@live.fr>
+ * Copyright (c) [2017] by Christophe Bacara <christophe@bacara.me>
  *
  * This file is part of xaway.
  *
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with xaway. If not, see
- * <http://www.gnu.org/licenses/>.
+ * along with xaway. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <sys/stat.h>

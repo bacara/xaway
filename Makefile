@@ -1,5 +1,5 @@
 #
-# Copyright (c) [2017] by Christophe Bacara <christophe.bacara@live.fr>
+# Copyright (c) [2017] by Christophe Bacara <christophe@bacara.me>
 #
 # This file is part of xaway.
 #
@@ -14,8 +14,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with xaway. If not, see
-# <http://www.gnu.org/licenses/>.
+# along with xaway. If not, see <http://www.gnu.org/licenses/>.
 #
 
 #
@@ -29,28 +28,19 @@ PROGRAM_NAME := xaway
 DESTDIR?=/
 
 # Compilation settings
-
 CC	:= gcc
-CFLAGS	:= -Wall -Werror
 
+CFLAGS	:= -Wall -Werror
 LFLAGS	:= $(shell pkg-config --cflags --libs x11 xscrnsaver)
 
 # Generic rule
 all: $(PROGRAM_NAME)
 
+# Main rule
 $(PROGRAM_NAME): xaway.c
 	$(CC) $(CFLAGS) $(LFLAGS) -I/usr/include/X11/extensions -o $@ $<
 
-#
-# Special rules
-#
-
-.PHONY: clean cleanall install
-clean:
-
-cleanall: clean
-	rm -f *~ $(PROGRAM_NAME)
-
+# (Un)installation
 install:
 	install -d $(DESTDIR)/usr/bin/
 	install -d $(DESTDIR)/usr/share/man/man8/
@@ -59,3 +49,18 @@ install:
 	install -m755 xaway   $(DESTDIR)/usr/bin/
 	install	-m644 xaway.8 $(DESTDIR)/usr/share/man/man8/
 	install -m644 LICENSE $(DESTDIR)/usr/share/licenses/xaway
+
+uninstall:
+	rm $(DESTDIR)/usr/bin/xaway
+	rm $(DESTDIR)/usr/share/man/man8/xaway.8.gz
+	rm $(DESTDIR)/usr/share/licenses/xaway
+
+#
+# Special rules
+#
+
+.PHONY: clean cleanall
+clean:
+
+cleanall: clean
+	rm -f *~ $(PROGRAM_NAME)
