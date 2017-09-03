@@ -24,8 +24,11 @@
 # Name of the final binary
 PROGRAM_NAME := xaway
 
-# Destination
+# Destination directory: root unless overriden
 DESTDIR?=/
+
+# Include path to xscrnsaver header
+X11_EXTENSIONS=/usr/include/x11/extensions
 
 # Compilation settings
 CC	:= gcc
@@ -33,14 +36,17 @@ CC	:= gcc
 CFLAGS	:= -Wall -Werror
 LFLAGS	:= $(shell pkg-config --cflags --libs x11 xscrnsaver)
 
-# Generic rule
+#
+# Rules
+#
+
 all: $(PROGRAM_NAME)
 
-# Main rule
+# Binary
 $(PROGRAM_NAME): xaway.c
-	$(CC) $(CFLAGS) $(LFLAGS) -I/usr/include/X11/extensions -o $@ $<
+	$(CC) $(CFLAGS) $(LFLAGS) -I$(X11_EXTENSIONS) -o $@ $<
 
-# (Un)installation
+# Installation
 install:
 	install -d $(DESTDIR)/usr/bin/
 	install -m755 xaway   $(DESTDIR)/usr/bin/
@@ -51,6 +57,7 @@ install:
 	install -d $(DESTDIR)/usr/share/licenses/
 	install -m644 LICENSE $(DESTDIR)/usr/share/licenses/xaway
 
+# Uninstallation
 uninstall:
 	rm $(DESTDIR)/usr/bin/xaway
 	rm $(DESTDIR)/usr/share/man/man8/xaway.8.gz
@@ -60,8 +67,6 @@ uninstall:
 # Special rules
 #
 
-.PHONY: clean cleanall
+.PHONY: clean
 clean:
-
-cleanall: clean
 	rm -f *~ $(PROGRAM_NAME)
