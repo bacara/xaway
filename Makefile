@@ -43,11 +43,12 @@ $(PROGRAM_NAME): xaway.c
 # (Un)installation
 install:
 	install -d $(DESTDIR)/usr/bin/
-	install -d $(DESTDIR)/usr/share/man/man8/
-	install -d $(DESTDIR)/usr/share/licenses/
-
 	install -m755 xaway   $(DESTDIR)/usr/bin/
+
+	install -d $(DESTDIR)/usr/share/man/man8/
 	install	-m644 xaway.8 $(DESTDIR)/usr/share/man/man8/
+
+	install -d $(DESTDIR)/usr/share/licenses/
 	install -m644 LICENSE $(DESTDIR)/usr/share/licenses/xaway
 
 uninstall:
