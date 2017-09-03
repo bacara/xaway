@@ -25,6 +25,9 @@
 # Name of the final binary
 PROGRAM_NAME := xaway
 
+# Destination
+DESTDIR?=/
+
 # Compilation settings
 
 CC	:= gcc
@@ -50,4 +53,6 @@ cleanall: clean
 	rm -f *~ $(PROGRAM_NAME)
 
 install:
-	cp $(PROGRAM_NAME) /usr/bin
+	install -m755 xaway   $(DESTDIR)/usr/bin/
+	install	-m644 xaway.8 $(DESTDIR)/usr/share/man/man8/
+	install -m644 LICENCE $(DESTDIR)/usr/share/licenses/xaway
